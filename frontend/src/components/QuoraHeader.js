@@ -65,7 +65,7 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
       const body = {
         questionName: question,
         questionUrl: inputUrl,
-        userId: user._id
+        username: user.username
       };
       try {
         console.log("Sending request:", body);
@@ -73,6 +73,8 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
         console.log("Response:", response.data);
         alert(response.data.message);
         setIsModalOpen(false);
+        setInputUrl("");
+        setQuestion("");
         fetchPosts();
       } catch (error) {
         console.error("Error:", error);

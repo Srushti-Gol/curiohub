@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const QuestionSchema = new mongoose.Schema({
   questionName: String,
   questionUrl: String,
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
+  username: {
+    type: String,
     ref: "Users",
     required: true,
   },
@@ -12,10 +12,10 @@ const QuestionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-  answers: [{
+  answers: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Answers",
-  }],
+  },
 });
 
 module.exports = mongoose.model("Questions", QuestionSchema);

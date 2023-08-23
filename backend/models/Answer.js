@@ -6,8 +6,8 @@ const AnswerSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "questions",
   },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
+  username: {
+    type: String,
     ref: "User",
     required: true,
   },

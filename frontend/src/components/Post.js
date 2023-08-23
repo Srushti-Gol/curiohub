@@ -8,7 +8,7 @@ import {
   ShareOutlined,
   CloseOutlined,
 } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useState} from "react";
 import "./css/Post.css";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
@@ -46,13 +46,14 @@ function Post({post,user,fetchPosts}) {
       const body = {
         answer: answer,
         questionId : post?._id,
-        userId: user._id
+        username: user.username
       }
       await axios.post('/addanswers' , body ,config)
       .then((res) => {
         console.log(res.data)
         alert("Answer added successfully")
         setIsModalOpen(false)
+        setAnswer("")
         fetchPosts();
       }).catch((e) => {
       console.log(e);
@@ -65,7 +66,7 @@ function Post({post,user,fetchPosts}) {
     <div className="post">
       <div className="post__info">
         <AccountCircleOutlined />
-        <h4>currentUser</h4>
+        <h4>{post?.username}</h4>
         <small><LastSeen date = {post?.createdAt}/></small>
       </div>
       <div className="post__body">
@@ -148,7 +149,7 @@ function Post({post,user,fetchPosts}) {
         className="post__answer"
       >
           {
-            post?.allAnswers?.map((_a,index)=>(<>
+            post?.allAnswers?.map((_a)=>(<>
         <div
           style={{
             display: "flex",
@@ -177,7 +178,7 @@ function Post({post,user,fetchPosts}) {
                     }}
                     className="post-info"
                   >
-                    <p>answer's user name</p>
+                    <p>{_a?.username}</p>
                     <span><LastSeen date = {_a?.createdAt}/></span>
                   </div>
                 </div>

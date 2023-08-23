@@ -14,11 +14,11 @@ const key = 'srushtisrushtisrushtisrushtisrus'
 router.post("/addquestions", async (req, res) => {
     console.log("hi");
     try {
-    const { questionName, questionUrl ,userId} = req.body;
+    const { questionName, questionUrl ,username} = req.body;
     const question = new questionDB({
         questionName,
         questionUrl,
-        userId,
+        username,
     });
     await question.save();
     res.status(201).send({ message: 'question added succsessfully' });
@@ -65,11 +65,11 @@ router.get("/getquestions", async (req, res) => {
 router.post("/addanswers", async (req, res) => {
 
 try {
-    const { answer, questionId , userId} = req.body;
+    const { answer, questionId , username} = req.body;
     const ans = new answerDB({
         answer,
         questionId,
-        userId,
+        username,
     });
     await ans.save();
     res.status(201).send({ message: 'answer added succsessfully'  });
@@ -78,38 +78,6 @@ try {
     res.status(500).send({ message: 'Error while adding question' });
     }
 });
-
-// router.get("/getanswers", async (req, res) => {
-//   try {
-//     await answerDB
-//       .aggregate([
-//         {
-//           $lookup: {
-//             from: "questions", // collection to join
-//             localField: "questionId", // field from input document
-//             foreignField: "_id",
-//             as: "question",
-//           },
-//         },
-       
-//       ])
-//       .exec()
-//       .then((doc) => {
-//         res.status(200).send(doc);
-//       })
-//       .catch((error) => {
-//         res.status(500).send({
-//           status: false,
-//           message: "Unable to get the answer details",
-//         });
-//       });
-//   } catch (e) {
-//     res.status(500).send({
-//       status: false,
-//       message: "Unexpected error",
-//     });
-//   }
-// });
 
 router.post('/register', async (req, res) => {
   try {
