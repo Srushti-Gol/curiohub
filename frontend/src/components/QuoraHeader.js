@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect }   from "react";
 import {
   Home,
   AssignmentTurnedInOutlined,
@@ -6,19 +6,85 @@ import {
   FeaturedPlayListOutlined,
   NotificationsOutlined,
   PeopleAltOutlined,
-  SearchOutlined,
   ExpandMoreOutlined,
   AccountCircleOutlined,
+  Search,
 } from "@mui/icons-material";
 import "./css/QuoraHeader.css";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
+import { Button, Input } from "@mui/material";
+import axios from "axios";
+import LoginForm from "./LoginForm"; // Import the LoginForm component
+import RegisterForm from "./RegisterForm"; // Import the RegisterForm component
 
-function QuoraHeader() {
+function QuoraHeader({ onHeader }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputUrl, setInputUrl] = useState("");
+  const [question, setQuestion] = useState("");
+  const [user , setUser] = useState({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  //const [user, setUser] = useState({});
+
   const Close = <CloseOutlined />;
 
+  const handleLogin = (status, token , user) => {
+    setIsAuthenticated(status);
+    if (status) {
+      console.log('Storing token:', token);
+      setUser(user);
+      onHeader(true,user);
+      localStorage.setItem('token', token); // Set token in local storage
+    } else {
+      localStorage.removeItem('token');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+  };
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
+    
+    e.preventDefault();
+    console.log('Question:', question);
+    console.log('URL:', inputUrl);
+    if (question !== "") {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };      
+      const body = {
+        questionName: question,
+        questionUrl: inputUrl,
+        userId: user._id
+      };
+      try {
+        console.log("Sending request:", body);
+        const response = await axios.post("/addquestions", body, config);
+        console.log("Response:", response.data);
+        alert(response.data.message);
+        setIsModalOpen(false);
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error in adding question");
+      }
+    }
+  };
+  
+
+  
   return (
     <div className="qHeader">
       <div className="qHeader-content">
@@ -46,12 +112,19 @@ function QuoraHeader() {
           </div>
         </div>
         <div className="qHeader__input">
-          <SearchOutlined />
-          <input type="text" placeholder="Search questions" />
+          <Search />
+          <Input type="text" placeholder="Search questions" />
         </div>
+        {!isAuthenticated ? (
+          <div className="qHeader__Rem">
+            <LoginForm onLogin={handleLogin} />
+            <RegisterForm  />
+          </div>
+        ) : (
         <div className="qHeader__Rem">
           <AccountCircleOutlined />
-          <button onClick={() => setIsModalOpen(true)}>Add Question</button>
+           <Button onClick={handleLogout}>Logout</Button>
+          <Button onClick={() => setIsModalOpen(true)}>Add Question</Button>
           <Modal
             open={isModalOpen}
             closeIcon={Close}
@@ -78,7 +151,9 @@ function QuoraHeader() {
               </div>
             </div>
             <div className="modal__Field">
-              <input
+              <Input
+                value= {question}
+                onChange={(e) => setQuestion(e.target.value)}
                 type=" text"
                 placeholder="Start your question with 'What', 'How', 'Why', etc. "
               />
@@ -88,18 +163,19 @@ function QuoraHeader() {
                   flexDirection: "column",
                 }}
               >
-                <input
-                  type="text"
-                  value={inputUrl}
-                  onChange={(e) => setInputUrl(e.target.value)}
-                  style={{
-                    margin: "5px 0",
-                    border: "1px solid lightgray",
-                    padding: "10px",
-                    outline: "2px solid #000",
-                  }}
-                  placeholder="Optional: inclue a link that gives context"
-                />
+                <Input
+                    type="text"
+                    value={inputUrl}
+                    onChange={(e) => setInputUrl(e.target.value)} // Add this line
+                    style={{
+                      margin: "5px 0",
+                      border: "1px solid lightgray",
+                      padding: "10px",
+                      outline: "2px solid #000",
+                    }}
+                    placeholder="Optional: include a link that gives context"
+                  />
+
                 {inputUrl !== "" && (
                   <img
                     style={{
@@ -116,15 +192,25 @@ function QuoraHeader() {
               <button className="cancle" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </button>
-              <button type="submit" className="add">
+              <button onClick={(e) => handleSubmit(e)} type="submit" className="add">
                 Add Question
               </button>
             </div>
           </Modal>
         </div>
+        )}
       </div>
     </div>
   );
 }
 
 export default QuoraHeader;
+
+
+
+
+
+
+
+
+

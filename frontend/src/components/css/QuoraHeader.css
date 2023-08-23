@@ -106,7 +106,7 @@
   color: #000;
 }
 
-.qHeader__Rem > button {
+.qHeader__Rem > .MuiButton-root {
   color: white;
   background: #222;
   text-transform: inherit;
@@ -114,7 +114,7 @@
   margin-left: 25px;
 }
 
-.qHeader__Rem > button {
+.qHeader__Rem > .MuiButton-root:hover {
   color: #222;
   background: rgb(214, 214, 214);
 }
