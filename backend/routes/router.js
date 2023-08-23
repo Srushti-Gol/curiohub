@@ -72,7 +72,7 @@ try {
         userId,
     });
     await ans.save();
-    res.status(201).send({ message: 'question added succsessfully' });
+    res.status(201).send({ message: 'answer added succsessfully'  });
     } catch (error) {
     console.error('Error while adding :', error);
     res.status(500).send({ message: 'Error while adding question' });

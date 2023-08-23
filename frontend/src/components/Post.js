@@ -26,7 +26,7 @@ function LastSeen({ date }) {
   )
 }
 
-function Post({post,user}) {
+function Post({post,user,fetchPosts}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [answer, setAnswer] = useState("");
   const Close = <CloseOutlined />;
@@ -53,7 +53,7 @@ function Post({post,user}) {
         console.log(res.data)
         alert("Answer added successfully")
         setIsModalOpen(false)
-        window.location.href = "/"
+        fetchPosts();
       }).catch((e) => {
       console.log(e);
       alert('Error in adding answer')

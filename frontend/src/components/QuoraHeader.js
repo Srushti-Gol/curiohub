@@ -18,7 +18,7 @@ import axios from "axios";
 import LoginForm from "./LoginForm"; // Import the LoginForm component
 import RegisterForm from "./RegisterForm"; // Import the RegisterForm component
 
-function QuoraHeader({ onHeader }) {
+function QuoraHeader({ onHeader, fetchPosts  }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputUrl, setInputUrl] = useState("");
   const [question, setQuestion] = useState("");
@@ -55,8 +55,6 @@ function QuoraHeader({ onHeader }) {
   const handleSubmit = async (e) => {
     
     e.preventDefault();
-    console.log('Question:', question);
-    console.log('URL:', inputUrl);
     if (question !== "") {
       const config = {
         headers: {
@@ -75,7 +73,7 @@ function QuoraHeader({ onHeader }) {
         console.log("Response:", response.data);
         alert(response.data.message);
         setIsModalOpen(false);
-        window.location.href = "/";
+        fetchPosts();
       } catch (error) {
         console.error("Error:", error);
         alert("Error in adding question");
