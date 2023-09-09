@@ -8,6 +8,7 @@ const QuestionSchema = new mongoose.Schema({
     ref: "Users",
     required: true,
   },
+  section : String,
   createdAt: {
     type: Date,
     default: Date.now(),

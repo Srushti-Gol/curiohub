@@ -24,6 +24,8 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
   const [question, setQuestion] = useState("");
   const [user , setUser] = useState({});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [selectedSection, setSelectedSection] = useState(""); // State variable for selected section
+  const sections = ["History", "Business", "Psychology" , "Cooking" , "Music" ,"Science", "Health" ,"Movies","Technology","Education"];
   //const [user, setUser] = useState({});
 
   const Close = <CloseOutlined />;
@@ -65,7 +67,8 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
       const body = {
         questionName: question,
         questionUrl: inputUrl,
-        username: user.username
+        username: user.username,
+        section: selectedSection,
       };
       try {
         console.log("Sending request:", body);
@@ -157,12 +160,31 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
                 type=" text"
                 placeholder="Start your question with 'What', 'How', 'Why', etc. "
               />
+               <br></br>
+               <br></br>
+
+                <select
+                    value={selectedSection}
+                    onChange={(e) => setSelectedSection(e.target.value)}
+                    className="section-dropdown"
+                  >
+                    <option value="">Select Section</option>
+                    {sections.map((section) => (
+                      <option key={section} value={section}>
+                        {section}
+                      </option>
+                    ))}
+                  </select>
+
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                 }}
               >
+               <br></br>
+               <br></br>
+
                 <Input
                     type="text"
                     value={inputUrl}

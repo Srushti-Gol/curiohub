@@ -36,7 +36,7 @@ function Post({post,user,fetchPosts}) {
       setAnswer(value);
   }
   
-  const handleSubmit= async () => {
+  const handleSubmit= async (username) => {
     if(post?._id && answer !== ""){
       const config = {
         headers : {
@@ -53,13 +53,28 @@ function Post({post,user,fetchPosts}) {
         console.log(res.data)
         alert("Answer added successfully")
         setIsModalOpen(false)
-        setAnswer("")
-        fetchPosts();
+        sendmail(username,config)
       }).catch((e) => {
       console.log(e);
       alert('Error in adding answer')
     });
     }
+    setAnswer("");
+    fetchPosts();
+  }
+  
+  const sendmail = async (username,config) => {
+    const body = {
+        username: username,
+        text : answer,
+    }
+    await axios
+        .post("/sendmailforgetanswer", body, config)
+        .then((res) => {
+          console.log(res.data);
+        }).catch((e) => {
+          console.log(e);
+        });
   }
   
   return (
@@ -105,7 +120,7 @@ function Post({post,user,fetchPosts}) {
               <button className="cancle" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </button>
-              <button onClick={handleSubmit} type="submit" className="add">
+              <button onClick={() => handleSubmit(post?.username)} type="submit" className="add">
                 Add Answer
               </button>
             </div>

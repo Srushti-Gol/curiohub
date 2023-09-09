@@ -15,6 +15,7 @@ function Quora() {
     } 
   };
   const [posts, setPosts] = useState([]);
+  const [section,setSection] = useState("all")
   const fetchPosts = async () => {
     try {
       const response = await axios.get("/getquestions");
@@ -23,7 +24,10 @@ function Quora() {
       console.log(error);
     }
   };
-
+  const handleSection = (s) => {
+    setSection(s);
+    console.log(s);
+  }
   useEffect(() => {
     fetchPosts(); // Fetch posts initially
   }, []);
@@ -33,8 +37,8 @@ function Quora() {
       <QuoraHeader onHeader={handleHeader} fetchPosts={fetchPosts}/>
       <div className="quora__contents">
         <div className="quora__content">
-          <Sidebar />
-          <Feed user = {user} posts={posts} fetchPosts={fetchPosts}/>
+          <Sidebar onSelectSection={handleSection}/>
+          <Feed user = {user} posts={posts} fetchPosts={fetchPosts} section = {section}/>
           <Widget />
         </div>
       </div>

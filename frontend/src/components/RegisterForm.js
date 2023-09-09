@@ -31,6 +31,7 @@ function RegisterForm() {
             console.log(res.data);
             alert(res.data.message)
             setIsModalOpen(false)
+            sendmail(body, config)
             window.location.href = "/"
           }).catch((e) => {
             setError(e);
@@ -38,6 +39,16 @@ function RegisterForm() {
       }
     }
 
+    const sendmail = async (body,config) => {
+      await axios
+          .post("/sendmail", body, config)
+          .then((res) => {
+            console.log(res.data);
+          }).catch((e) => {
+            setError(e);
+          });
+    }
+    
     return (
       <>
       <Button onClick={() => setIsModalOpen(true)}>Register</Button>

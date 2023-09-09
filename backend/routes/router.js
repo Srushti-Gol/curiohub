@@ -14,11 +14,12 @@ const key = 'srushtisrushtisrushtisrushtisrus'
 router.post("/addquestions", async (req, res) => {
     console.log("hi");
     try {
-    const { questionName, questionUrl ,username} = req.body;
+    const { questionName, questionUrl ,username , section} = req.body;
     const question = new questionDB({
         questionName,
         questionUrl,
         username,
+        section,
     });
     await question.save();
     res.status(201).send({ message: 'question added succsessfully' });
@@ -111,6 +112,66 @@ router.post('/login', async (req, res) => {
     res.status(500).send({ message: 'Error while logging in'  });
   }
 });
+
+
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: "golsrushti1@gmail.com", // Your Gmail email address
+    pass: "bhabytwxnleqzcbe", // Your Gmail password or app password
+  },
+});
+
+router.post('/sendmail', async (req, res) => {
+    const { email } = req.body;
+    const sendRegistrationEmail = (userEmail) => {
+      const mailOptions = {
+        from: "golsrushti1@gmail.com",
+        to: userEmail,
+        subject: "Welcome to Our App!",
+        text: "Thank you for registering on our app. We're excited to have you!",
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log("Error sending email:", error);
+        } else {
+          console.log("Email sent:", info.response);
+        }
+      });
+    };
+
+    await sendRegistrationEmail(email);
+});
+
+
+router.post('/sendmailforgetanswer', async (req, res) => {
+  const { username,text } = req.body;
+  const user = await User.findOne({ username });
+
+  const sendRegistrationEmail = () => {
+    const mailOptions = {
+      from: "golsrushti1@gmail.com",
+      to: user.email,
+      subject: "You got the Answer of your Question",
+      html: text,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+  };
+
+  await sendRegistrationEmail();
+  
+});
+
 
 
 module.exports = router;
