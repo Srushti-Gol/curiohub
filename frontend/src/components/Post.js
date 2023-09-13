@@ -8,7 +8,7 @@ import {
   ShareOutlined,
   CloseOutlined,
 } from "@mui/icons-material";
-import React, { useState} from "react";
+import React, { useState } from "react";
 import "./css/Post.css";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
@@ -21,46 +21,51 @@ import ReactHtmlParser from 'html-react-parser'
 function LastSeen({ date }) {
   return (
     <div>
-      Last seen: <ReactTimeAgo date={date} locale="en-US" timeStyle="round"/>
+      Last seen: <ReactTimeAgo date={date} locale="en-US" timeStyle="round" />
     </div>
   )
 }
 
-function Post({post,user,fetchPosts}) {
+function Post({ post, user, fetchPosts }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [answer, setAnswer] = useState("");
   const Close = <CloseOutlined />;
 
 
-  const handleQuill = (value)=>{
-      setAnswer(value);
+  const handleQuill = (value) => {
+    setAnswer(value);
   }
-  
+
   const handleSubmit= async (username) => {
-    if(post?._id && answer !== ""){
-      const config = {
-        headers : {
-          "Content-Type" : "application/json",
-        },
+      if(localStorage.getItem("token") == null){
+          alert("you need to login first")
       }
-      const body = {
-        answer: answer,
-        questionId : post?._id,
-        username: user.username
+      else{
+        if(post?._id && answer !== ""){
+          const config = {
+            headers : {
+              "Content-Type" : "application/json",
+            },
+          }
+          const body = {
+            answer: answer,
+            questionId : post?._id,
+            username: user.username
+          }
+          await axios.post('/addanswers' , body ,config)
+          .then((res) => {
+            console.log(res.data)
+            alert("Answer added successfully")
+            setIsModalOpen(false)
+            sendmail(username,config)
+          }).catch((e) => {
+          console.log(e);
+          alert('Error in adding answer please try by login again')
+        });
+        }
+        setAnswer("");
+        fetchPosts();
       }
-      await axios.post('/addanswers' , body ,config)
-      .then((res) => {
-        console.log(res.data)
-        alert("Answer added successfully")
-        setIsModalOpen(false)
-        sendmail(username,config)
-      }).catch((e) => {
-      console.log(e);
-      alert('Error in adding answer')
-    });
-    }
-    setAnswer("");
-    fetchPosts();
   }
   
   const sendmail = async (username,config) => {
@@ -76,13 +81,13 @@ function Post({post,user,fetchPosts}) {
           console.log(e);
         });
   }
-  
+
   return (
     <div className="post">
       <div className="post__info">
         <AccountCircleOutlined />
         <h4>{post?.username}</h4>
-        <small><LastSeen date = {post?.createdAt}/></small>
+        <small><LastSeen date={post?.createdAt} /></small>
       </div>
       <div className="post__body">
         <div className="post__question">
@@ -114,7 +119,7 @@ function Post({post,user,fetchPosts}) {
               </p>
             </div>
             <div className="modal__answer">
-              <ReactQuill value = {answer} onChange={handleQuill} placeholder="Enter your answer" />
+              <ReactQuill value={answer} onChange={handleQuill} placeholder="Enter your answer" />
             </div>
             <div className="modal__button">
               <button className="cancle" onClick={() => setIsModalOpen(false)}>
@@ -127,10 +132,10 @@ function Post({post,user,fetchPosts}) {
           </Modal>
         </div>
         {
-        <img src={post.questionUrl} alt = "" />
+          <img src={post.questionUrl} alt="" />
         }
       </div>
-      
+
       <div className="post__footer">
         <div className="post__footerAction">
           <ArrowUpwardOutlined />
@@ -163,46 +168,46 @@ function Post({post,user,fetchPosts}) {
         }}
         className="post__answer"
       >
-          {
-            post?.allAnswers?.map((_a)=>(<>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            padding: "10px 5px",
-            borderTop: "1px solid lightgray",
-          }}
-          className="post-answer-container"
-        >
-        <div
+        {
+          post?.allAnswers?.map((_a) => (<>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                padding: "10px 5px",
+                borderTop: "1px solid lightgray",
+              }}
+              className="post-answer-container"
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "10px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  color: "#888",
+                }}
+                className="post-answered"
+              >
+                <AccountCircleOutlined />
+                <div
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "10px",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    color: "#888",
+                    margin: "0px 10px",
                   }}
-                  className="post-answered"
+                  className="post-info"
                 >
-                  <AccountCircleOutlined />
-                  <div
-                    style={{
-                      margin: "0px 10px",
-                    }}
-                    className="post-info"
-                  >
-                    <p>{_a?.username}</p>
-                    <span><LastSeen date = {_a?.createdAt}/></span>
-                  </div>
+                  <p>{_a?.username}</p>
+                  <span><LastSeen date={_a?.createdAt} /></span>
                 </div>
-                <div className="post-answer">{ReactHtmlParser(_a?.answer)}</div>
-        </div>
-            </>
-            ))
-          }
-          
+              </div>
+              <div className="post-answer">{ReactHtmlParser(_a?.answer)}</div>
+            </div>
+          </>
+          ))
+        }
+
       </div>
     </div>
   );

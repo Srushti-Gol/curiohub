@@ -131,7 +131,7 @@ router.post('/sendmail', async (req, res) => {
         from: "golsrushti1@gmail.com",
         to: userEmail,
         subject: "Welcome to Our App!",
-        text: "Thank you for registering on our app. We're excited to have you!",
+        text: "Thank you for registering on our app. We're excited to have you!, you need to verify email by typing code:121103",
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -172,7 +172,35 @@ router.post('/sendmailforgetanswer', async (req, res) => {
   
 });
 
+router.get('/search', async (req, res) => {
+  try {
+    const { query } = req.query; // Get the user's search query
 
+    // Implement the search logic to find relevant questions
+    const results = await questionDB
+      .aggregate([
+        {
+          $match: {
+            $text: { $search: query },
+          },
+        },
+        {
+          $lookup: {
+            from: 'answers',
+            localField: '_id',
+            foreignField: 'questionId',
+            as: 'allAnswers',
+          },
+        },
+      ])
+      .exec();
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Error in search" });
+  }
+});
 
 module.exports = router;
 

@@ -8,7 +8,6 @@ import {
   PeopleAltOutlined,
   ExpandMoreOutlined,
   AccountCircleOutlined,
-  Search,
 } from "@mui/icons-material";
 import "./css/QuoraHeader.css";
 import { Modal } from "react-responsive-modal";
@@ -17,8 +16,9 @@ import { Button, Input } from "@mui/material";
 import axios from "axios";
 import LoginForm from "./LoginForm"; // Import the LoginForm component
 import RegisterForm from "./RegisterForm"; // Import the RegisterForm component
+import SearchBar from "./SearchBar";
 
-function QuoraHeader({ onHeader, fetchPosts  }) {
+function QuoraHeader({ onHeader, fetchPosts , onSearch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputUrl, setInputUrl] = useState("");
   const [question, setQuestion] = useState("");
@@ -26,10 +26,20 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedSection, setSelectedSection] = useState(""); // State variable for selected section
   const sections = ["History", "Business", "Psychology" , "Cooking" , "Music" ,"Science", "Health" ,"Movies","Technology","Education"];
-  //const [user, setUser] = useState({});
+
 
   const Close = <CloseOutlined />;
 
+  const handleSearching = (p) => {
+    onSearch(p);
+  };
+
+const handleEmptySearch = () => {
+  // Fetch all posts when the search query is empty
+  fetchPosts();
+};
+
+  
   const handleLogin = (status, token , user) => {
     setIsAuthenticated(status);
     if (status) {
@@ -45,6 +55,7 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    setUser({});
   };
 
   useEffect(() => {
@@ -115,8 +126,7 @@ function QuoraHeader({ onHeader, fetchPosts  }) {
           </div>
         </div>
         <div className="qHeader__input">
-          <Search />
-          <Input type="text" placeholder="Search questions" />
+        <SearchBar onSearch={handleSearching} onEmptySearch={handleEmptySearch} />
         </div>
         {!isAuthenticated ? (
           <div className="qHeader__Rem">

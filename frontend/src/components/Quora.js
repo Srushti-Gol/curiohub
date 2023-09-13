@@ -24,17 +24,21 @@ function Quora() {
       console.log(error);
     }
   };
+  const handleSearching = (p) => {
+    setPosts(p);
+  }
   const handleSection = (s) => {
     setSection(s);
     console.log(s);
   }
+  
   useEffect(() => {
     fetchPosts(); // Fetch posts initially
   }, []);
   
   return (
     <div className="quora">
-      <QuoraHeader onHeader={handleHeader} fetchPosts={fetchPosts}/>
+      <QuoraHeader onHeader={handleHeader} fetchPosts={fetchPosts} onSearch = {handleSearching}/>
       <div className="quora__contents">
         <div className="quora__content">
           <Sidebar onSelectSection={handleSection}/>
