@@ -17,6 +17,16 @@ const QuestionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Answers",
   },
+  comments: [
+    {
+      username: String,
+      text: String,
+      createdAt: {
+        type: Date,
+        default: Date.now(),
+      },
+    },
+  ],
 });
 QuestionSchema.index({ questionName: 'text' });
 

@@ -43,7 +43,7 @@ const handleEmptySearch = () => {
   const handleLogin = (status, token , user) => {
     setIsAuthenticated(status);
     if (status) {
-      console.log('Storing token:', token);
+      // console.log('Storing token:', token);
       setUser(user);
       onHeader(true,user);
       localStorage.setItem('token', token); // Set token in local storage
@@ -82,16 +82,16 @@ const handleEmptySearch = () => {
         section: selectedSection,
       };
       try {
-        console.log("Sending request:", body);
+        // console.log("Sending request:", body);
         const response = await axios.post("/addquestions", body, config);
-        console.log("Response:", response.data);
+        // console.log("Response:", response.data);
         alert(response.data.message);
         setIsModalOpen(false);
         setInputUrl("");
         setQuestion("");
         fetchPosts();
       } catch (error) {
-        console.error("Error:", error);
+        // console.error("Error:", error);
         alert("Error in adding question");
       }
     }

@@ -21,7 +21,7 @@ function Quora() {
       const response = await axios.get("/getquestions");
       setPosts(response.data.reverse());
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   const handleSearching = (p) => {
@@ -29,7 +29,7 @@ function Quora() {
   }
   const handleSection = (s) => {
     setSection(s);
-    console.log(s);
+    // console.log(s);
   }
   
   useEffect(() => {

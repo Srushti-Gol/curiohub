@@ -210,3 +210,20 @@
   width: 100%;
   height: 120px;
 }
+
+.post__btnComment{
+  margin-left: auto;
+  cursor: pointer;
+  padding: 7px;
+  background-color: #222;
+  outline: none;
+  border: none;
+  color: lightgray;
+  font-weight: 300;
+  font-size: 14px;
+  border-radius: 5px;
+}
+.post__btnComment:hover {
+  color: #222;
+  background: lightgray;
+}

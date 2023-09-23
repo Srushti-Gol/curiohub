@@ -5,7 +5,7 @@
 
   function Feed({ user, posts, fetchPosts, section }) {
     const filteredPosts = section === "all" ? posts : posts.filter(post => post.section === section);
-      console.log(section);
+      // console.log(section);
     return (
       <div className="feed">
         <QuoraBox />

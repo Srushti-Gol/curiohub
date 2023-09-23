@@ -7,7 +7,7 @@ const AnswerSchema = new mongoose.Schema({
     ref: "questions",
   },
   username: {
-    type: String,
+    type: String, 
     ref: "User",
     required: true,
   },

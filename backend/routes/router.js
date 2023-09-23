@@ -12,72 +12,97 @@ const key = 'srushtisrushtisrushtisrushtisrus'
 
 // Protected route - Add a new question
 router.post("/addquestions", async (req, res) => {
-    console.log("hi");
-    try {
-    const { questionName, questionUrl ,username , section} = req.body;
+  console.log("hi");
+  try {
+    const { questionName, questionUrl, username, section } = req.body;
     const question = new questionDB({
-        questionName,
-        questionUrl,
-        username,
-        section,
+      questionName,
+      questionUrl,
+      username,
+      section,
     });
     await question.save();
     res.status(201).send({ message: 'question added succsessfully' });
-    } catch (error) {
+  } catch (error) {
     console.error('Error while adding question:', error);
     res.status(500).send({ message: 'Error while adding question' });
-    }
+  }
 });
-  
+
 // Protected route - Get all questions
 router.get("/getquestions", async (req, res) => {
-    try {
+  try {
     await questionDB
-        .aggregate([
+      .aggregate([
         {
-            $lookup: {
+          $lookup: {
             from: "answers", // collection to join
             localField: "_id", // field from input document
             foreignField: "questionId",
             as: "allAnswers", // output array field
-            },
+          },
         },
-        
-        ])
-        .exec()
-        .then((doc) => {
+
+      ])
+      .exec()
+      .then((doc) => {
         res.status(200).send(doc);
-        })
-        .catch((error) => {
+      })
+      .catch((error) => {
         res.status(500).send({
-            status: false,
-            message: "Unable to get the question details",
+          status: false,
+          message: "Unable to get the question details",
         });
-        });
-    } catch (e) {
+      });
+  } catch (e) {
     res.status(500).send({
-        status: false,
-        message: "Unexpected error",
+      status: false,
+      message: "Unexpected error",
     });
-    }
+  }
 });
+
+
+
+router.post("/addcomment", async (req, res) => {
+
+  try {
+    const { comment, questionId, username } = req.body;
+    console.log(req.body);
+    const question = await questionDB.findById(questionId);
+    
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    question.comments.push({ username, text: comment });
+    await question.save();
+
+    res.status(201).json({ message: "Comment added successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Error in adding comment" });
+  }
+});
+
+
 
 // Protected route - Add a new answer
 router.post("/addanswers", async (req, res) => {
 
-try {
-    const { answer, questionId , username} = req.body;
+  try {
+    const { answer, questionId, username } = req.body;
     const ans = new answerDB({
-        answer,
-        questionId,
-        username,
+      answer,
+      questionId,
+      username,
     });
     await ans.save();
-    res.status(201).send({ message: 'answer added succsessfully'  });
-    } catch (error) {
+    res.status(201).send({ message: 'answer added succsessfully' });
+  } catch (error) {
     console.error('Error while adding :', error);
     res.status(500).send({ message: 'Error while adding question' });
-    }
+  }
 });
 
 router.post('/register', async (req, res) => {
@@ -106,10 +131,10 @@ router.post('/login', async (req, res) => {
     if (!validPassword)
       return res.status(400).send({ message: 'Invalid email or password' });
 
-    const token = jwt.sign({ userId: user._id }, key ); // Replace with your secret key
+    const token = jwt.sign({ userId: user._id }, key); // Replace with your secret key
     res.status(200).json({ token, user }); // Move this line here
   } catch (error) {
-    res.status(500).send({ message: 'Error while logging in'  });
+    res.status(500).send({ message: 'Error while logging in' });
   }
 });
 
@@ -125,30 +150,30 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post('/sendmail', async (req, res) => {
-    const { email } = req.body;
-    const sendRegistrationEmail = (userEmail) => {
-      const mailOptions = {
-        from: "golsrushti1@gmail.com",
-        to: userEmail,
-        subject: "Welcome to Our App!",
-        text: "Thank you for registering on our app. We're excited to have you!, you need to verify email by typing code:121103",
-      };
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.log("Error sending email:", error);
-        } else {
-          console.log("Email sent:", info.response);
-        }
-      });
+  const { email } = req.body;
+  const sendRegistrationEmail = (userEmail) => {
+    const mailOptions = {
+      from: "golsrushti1@gmail.com",
+      to: userEmail,
+      subject: "Welcome to Our App!",
+      text: "Thank you for registering on our app. We're excited to have you!, you need to verify email by typing code:121103",
     };
 
-    await sendRegistrationEmail(email);
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+  };
+
+  await sendRegistrationEmail(email);
 });
 
 
 router.post('/sendmailforgetanswer', async (req, res) => {
-  const { username,text } = req.body;
+  const { username, text } = req.body;
   const user = await User.findOne({ username });
 
   const sendRegistrationEmail = () => {
@@ -169,7 +194,7 @@ router.post('/sendmailforgetanswer', async (req, res) => {
   };
 
   await sendRegistrationEmail();
-  
+
 });
 
 router.get('/search', async (req, res) => {
