@@ -63,6 +63,48 @@ router.get("/getquestions", async (req, res) => {
 });
 
 
+router.get('/getquestionsofuser/:userId', async (req, res) => {
+  try {
+    
+    const userId = req.params.userId;
+    console.log(userId);
+    await questionDB
+      .aggregate([
+        {
+          $match: {
+            username: userId, // Match questions for the specific user
+          },
+        },
+        {
+          $lookup: {
+            from: 'answers',
+            localField: '_id',
+            foreignField: 'questionId',
+            as: 'allAnswers',
+          },
+        },
+      ])
+      .exec()
+      .then((doc) => {
+        res.status(200).send(doc);
+      })
+      .catch((error) => {
+        res.status(500).send({
+          status: false,
+          message: 'Unable to get the question details',
+        });
+      });
+  } catch (e) {
+    res.status(500).send({
+      status: false,
+      message: 'Unexpected error',
+    });
+  }
+});
+
+
+
+
 
 router.post("/addcomment", async (req, res) => {
 
@@ -199,9 +241,8 @@ router.post('/sendmailforgetanswer', async (req, res) => {
 
 router.get('/search', async (req, res) => {
   try {
-    const { query } = req.query; // Get the user's search query
+    const { query } = req.query; 
 
-    // Implement the search logic to find relevant questions
     const results = await questionDB
       .aggregate([
         {
@@ -226,6 +267,64 @@ router.get('/search', async (req, res) => {
     res.status(500).json({ message: "Error in search" });
   }
 });
+router.delete('/api/questions/:questionId', async (req, res) => {
+  const { questionId } = req.params;
+
+  try {
+
+    const question = await questionDB.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    await question.remove();
+
+    res.json({ message: 'Question deleted successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Error deleting question' });
+  }
+});
+
+// Express route for deleting an answer
+router.delete('/api/answers/:answerId', async (req, res) => {
+  const { answerId } = req.params;
+
+  try {
+
+    const answer = await answerDB.findById(answerId);
+    if (!answer) {
+      return res.status(404).json({ message: 'Answer not found' });
+    }
+
+    await answer.remove();
+
+    res.json({ message: 'Answer deleted successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Error deleting answer' });
+  }
+});
+
+router.delete('/api/comments/:commentId', async (req, res) => {
+  const { commentId } = req.params;
+
+  try {
+
+    const comment = await commentDB.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+    await comment.remove();
+
+    res.json({ message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Error deleting comment' });
+  }
+});
+
+
 
 module.exports = router;
 
