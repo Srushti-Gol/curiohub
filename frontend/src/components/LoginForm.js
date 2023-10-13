@@ -3,8 +3,8 @@ import { Button, Input } from "@mui/material";
 import axios from "axios";
 import { Modal } from "react-responsive-modal";
 import { CloseOutlined } from "@mui/icons-material";
+import "./css/Form.css";
 
-const Close = <CloseOutlined />;
 
 function LoginForm({ onLogin }) {
   const [password, setPassword] = useState("");
@@ -52,10 +52,12 @@ function LoginForm({ onLogin }) {
 
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)}>Login</Button>
+      <Button className="login-button" onClick={() => setIsModalOpen(true)}>
+        Login
+      </Button>
       <Modal
         open={isModalOpen}
-        closeIcon={Close}
+        closeIcon={<CloseOutlined className="close-icon" />}
         onClose={handleCloseModal}
         closeOnEsc
         center
@@ -66,25 +68,25 @@ function LoginForm({ onLogin }) {
           },
         }}
       >
-        <form onSubmit={handleSubmit}>
+        <form className="login-form" onSubmit={handleSubmit}>
           <Input
+            className="login-input"
             type="text"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <br />
           <Input
+            className="login-input"
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <br />
-          <button type="submit" disabled={isLoading}>
+          <button type="submit" className="login-button" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p className="error-message">{error}</p>}
         </form>
       </Modal>
     </>

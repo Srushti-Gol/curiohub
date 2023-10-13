@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Button, Input } from "@mui/material";
+import { Button } from "@mui/material";
 import axios from "axios";
 import { Modal } from "react-responsive-modal";
 import { CloseOutlined, } from "@mui/icons-material";
+import "./css/Form.css";
 const Close = <CloseOutlined />;
+
 
 function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setemail] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [otp, setOtp] = useState(0);
@@ -87,42 +89,51 @@ function RegisterForm() {
           },
         }}
       >
-        <form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <br />
-          <Input
-            type="text"
-            placeholder="email"
-            value={email}
-            onChange={(e) => setemail(e.target.value)}
-          />
-          <br />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <br />
-          <button type="submit">Send Email</button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <div>
-            <p>verify code that is send in your email</p>
-            <Input
-              type="number"
-              placeholder="otp"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-            <br />
-            <button onClick={handelRegister}>Register</button>
-          </div>
-        </form>
+        <form className="registration-form" onSubmit={handleSubmit}>
+  <input
+    className="registration-input"
+    type="text"
+    placeholder="Username"
+    value={username}
+    onChange={(e) => setUsername(e.target.value)}
+  />
+  <br />
+  <input
+    className="registration-input"
+    type="text"
+    placeholder="Email"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+  />
+  <br />
+  <input
+    className="registration-input"
+    type="password"
+    placeholder="Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+  />
+  <br />
+  <button className="registration-button" type="submit">
+    Register
+  </button>
+  {error && <p style={{ color: "red" }}>{error}</p>}
+  <div>
+    <p>Verify the code sent to your email</p>
+    <input
+      className="registration-input"
+      type="number"
+      placeholder="Enter OTP"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+    />
+    <br />
+    <button className="registration-button" onClick={handelRegister}>
+      Verify and Register
+    </button>
+  </div>
+</form>
+
       </Modal>
     </>
   );

@@ -37,6 +37,7 @@
   border-radius: 5px;
 }
 
+
 .qHeader__icon > .MuiSvgIcon-root {
   color: gray;
   font-size: xx-large;
@@ -66,6 +67,7 @@
   border-radius: 10px;
   color: #b92b27;
 } */
+
 
 .qHeader__input {
   display: flex;

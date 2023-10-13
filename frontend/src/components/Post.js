@@ -25,7 +25,7 @@ function LastSeen({ date }) {
   )
 }
 
-function Post({ post, user, fetchPosts }) {
+function Post({ post, user, fetchPosts , isAdmin }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [answer, setAnswer] = useState("");
   const [isCModelOpen, setIsCModalOpen] = useState(false);
@@ -125,6 +125,64 @@ function Post({ post, user, fetchPosts }) {
       });
   }
 
+
+  const handleDeleteQuestion = async (questionId) => {
+    if (isAdmin) {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      await axios
+        .delete(`/api/questions/${questionId}`, config)
+        .then((res) => {
+          alert("Question deleted successfully");
+          fetchPosts();
+        })
+        .catch((e) => {
+          alert("Error deleting question. Please try again.");
+        });
+    }
+  };
+  
+  const handleDeleteAnswer = async (answerId) => {
+    if (isAdmin) {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      await axios
+        .delete(`/api/answers/${answerId}`, config)
+        .then((res) => {
+          alert("Answer deleted successfully");
+          fetchPosts();
+        })
+        .catch((e) => {
+          alert("Error deleting answer. Please try again.");
+        });
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (isAdmin) {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      await axios
+        .delete(`/api/comments/${commentId}`, config)
+        .then((res) => {
+          alert("Comment deleted successfully");
+          fetchPosts();
+        })
+        .catch((e) => {
+          alert("Error deleting comment. Please try again.");
+        });
+    }
+  };
+
   return (
     <div className="post">
       <div className="post__info">
@@ -141,6 +199,12 @@ function Post({ post, user, fetchPosts }) {
           >
             Answer
           </button>
+          {isAdmin && (
+            <button onClick={() => handleDeleteQuestion(post._id)} className="post__btnComment">
+              Delete Question
+            </button>
+          )}
+
           <Modal
             open={isModalOpen}
             closeIcon={Close}
@@ -280,7 +344,12 @@ function Post({ post, user, fetchPosts }) {
                           <span>
                             <LastSeen date={_c?.createdAt} />
                           </span>
-                        </div>        
+                        </div>   
+                        {isAdmin && (
+                  <button onClick={() => handleDeleteComment(_c?._id)} className="post__btnComment">
+                    Delete Comment
+                  </button>
+                )}     
                       </div>
                       <div className="post-answer">
                         {ReactHtmlParser(_c?.text)}
@@ -349,6 +418,11 @@ function Post({ post, user, fetchPosts }) {
                   <p>{_a?.username}</p>
                   <span><LastSeen date={_a?.createdAt} /></span>
                 </div>
+                {isAdmin && (
+                  <button onClick={() => handleDeleteAnswer(_a?._id)} className="post__btnComment">
+                    Delete Answer
+                  </button>
+                )}     
               </div>
               <div className="post-answer">{ReactHtmlParser(_a?.answer)}</div>
             </div>
